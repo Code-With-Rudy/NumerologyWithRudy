@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerology Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px 20px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            color: white;
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+            line-height: 1.2;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            }
+            to {
+                text-shadow: 2px 2px 20px rgba(255, 255, 255, 0.5);
+            }
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+
+        .calculator-tabs {
+            display: flex;
+            margin-bottom: 25px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .tab-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="date"] {
+            width: 100%;
+            padding: 18px 20px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            text-align: center;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.02);
+        }
+
+        input[type="text"]::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            opacity: 0.7;
+            cursor: pointer;
+        }
+
+        .calculate-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ffa726);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+            width: 100%;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 8px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .calculation-steps {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .final-result {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-top: 15px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .planet {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-top: 10px;
+            animation: pulse 2s ease-in-out infinite;
+            line-height: 1.4;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .clear-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .clear-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .clear-btn:active {
+            transform: scale(0.98);
+        }
+
+        .letter-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(45px, 1fr));
+            gap: 8px;
+            margin: 15px 0;
+            max-width: 100%;
+        }
+
+        .letter-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 6px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: white;
+            backdrop-filter: blur(10px);
+            min-height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 5px;
+            }
+
+            .container {
+                padding: 25px 15px;
+                margin: 5px;
+                border-radius: 15px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .subtitle {
+                font-size: 0.9rem;
+                margin-bottom: 20px;
+            }
+
+            .calculate-btn {
+                padding: 16px;
+                font-size: 1rem;
+            }
+
+            .final-result {
+                font-size: 1.3rem;
+            }
+
+            .planet {
+                font-size: 1.2rem;
+            }
+
+            .calculation-steps {
+                font-size: 0.9rem;
+            }
+
+            .letter-breakdown {
+                grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+                gap: 6px;
+            }
+
+            .letter-item {
+                padding: 8px 4px;
+                font-size: 0.8rem;
+                min-height: 30px;
+            }
+
+            .tab-btn {
+                padding: 10px 12px;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .tab-btn {
+                padding: 8px 10px;
+                font-size: 0.75rem;
+            }
+
+            .container {
+                padding: 20px 12px;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            input[type="text"],
+            input[type="date"] {
+                padding: 16px 18px;
+                font-size: 1.1rem;
+            }
+
+            .calculate-btn {
+                padding: 14px;
+                font-size: 0.95rem;
+            }
+
+            .letter-breakdown {
+                grid-template-columns: repeat(auto-fit, minmax(35px, 1fr));
+                gap: 5px;
+            }
+
+            .letter-item {
+                padding: 6px 3px;
+                font-size: 0.75rem;
+                min-height: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ Numerology Calculator ✨</h1>
+        <p class="subtitle">Discover your cosmic connection through numbers</p>
+        
+        <div class="calculator-tabs">
+            <button class="tab-btn active" onclick="switchTab('name')">Name Number</button>
+            <button class="tab-btn" onclick="switchTab('lifepath')">Life Path</button>
+        </div>
+
+        <div id="nameTab" class="tab-content active">
+            <div class="input-group">
+                <label for="nameInput">Enter Your Name:</label>
+                <input type="text" id="nameInput" placeholder="Type your name here..." autocomplete="off">
+            </div>
+            <button class="calculate-btn" onclick="calculateNumerology()">Calculate Name Number</button>
+        </div>
+
+        <div id="lifepathTab" class="tab-content">
+            <div class="input-group">
+                <label for="birthdateInput">Enter Your Birthday:</label>
+                <input type="date" id="birthdateInput">
+            </div>
+            <button class="calculate-btn" onclick="calculateLifePath()">Calculate Life Path</button>
+        </div>
+        
+        <div id="result" class="result">
+            <div id="calculationSteps" class="calculation-steps"></div>
+            <div id="finalResult" class="final-result"></div>
+            <div id="planet" class="planet"></div>
+            <button class="clear-btn" onclick="clearResult()">Calculate Another</button>
+        </div>
+    </div>
+
+    <script>
+        // Numerology mapping
+        const numerologyMap = {
+            1: "AJS",
+            2: "BKT", 
+            3: "CLU",
+            4: "DMV",
+            5: "ENW",
+            6: "FOX",
+            7: "GPY",
+            8: "HQZ",
+            9: "IR"
+        };
+
+        // Planet mapping for name numerology
+        const planetMap = {
+            1: "Sun ☀️",
+            2: "Moon 🌙", 
+            3: "Jupiter ♃",
+            4: "Rahu 🐉",
+            5: "Mercury ☿",
+            6: "Venus ♀",
+            7: "Ketu 🔥",
+            8: "Saturn ♄",
+            9: "Mars ♂"
+        };
+
+        // Life Path Number mapping with personality traits
+        const lifePathMap = {
+            1: "Sun ☀️ - Leader, Independent, Pioneer",
+            2: "Moon 🌙 - Cooperative, Sensitive, Peacemaker", 
+            3: "Jupiter ♃ - Creative, Expressive, Optimistic",
+            4: "Rahu 🐉 - Practical, Organized, Hard-working",
+            5: "Mercury ☿ - Adventurous, Freedom-loving, Dynamic",
+            6: "Venus ♀ - Nurturing, Responsible, Caring",
+            7: "Ketu 🔥 - Spiritual, Analytical, Introspective",
+            8: "Saturn ♄ - Ambitious, Business-minded, Powerful",
+            9: "Mars ♂ - Humanitarian, Generous, Compassionate"
+        };
+
+        // Create letter to number lookup
+        const letterToNumber = {};
+        for (const [number, letters] of Object.entries(numerologyMap)) {
+            for (const letter of letters) {
+                letterToNumber[letter] = parseInt(number);
+            }
+        }
+
+        function switchTab(tabName) {
+            // Remove active class from all tabs and content
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab and content
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            // Clear results when switching tabs
+            clearResult();
+        }
+
+        function calculateNumerology() {
+            const nameInput = document.getElementById('nameInput').value.trim();
+            
+            if (!nameInput) {
+                alert('Please enter a name!');
+                return;
+            }
+
+            const name = nameInput.toUpperCase();
+            let total = 0;
+            let breakdown = [];
+            
+            // Calculate total and create breakdown
+            for (const char of name) {
+                if (letterToNumber[char]) {
+                    total += letterToNumber[char];
+                    breakdown.push(`${char}=${letterToNumber[char]}`);
+                }
+            }
+
+            if (breakdown.length === 0) {
+                alert('Please enter a valid name with letters!');
+                return;
+            }
+
+            // Reduce to single digit
+            let singleDigit = total;
+            let reductionSteps = [];
+            
+            while (singleDigit > 9) {
+                const digits = singleDigit.toString().split('').map(Number);
+                reductionSteps.push(`${singleDigit} = ${digits.join(' + ')} = ${digits.reduce((a, b) => a + b)}`);
+                singleDigit = digits.reduce((a, b) => a + b);
+            }
+
+            // Get planet
+            const planet = planetMap[singleDigit];
+
+            // Display results
+            displayResults(breakdown, total, reductionSteps, singleDigit, planet, name, 'name');
+        }
+
+        function calculateLifePath() {
+            const birthdateInput = document.getElementById('birthdateInput').value;
+            
+            if (!birthdateInput) {
+                alert('Please select your birthdate!');
+                return;
+            }
+
+            // Parse the date and extract digits
+            const date = new Date(birthdateInput);
+            const month = date.getMonth() + 1; // getMonth() returns 0-11
+            const day = date.getDate();
+            const year = date.getFullYear();
+            
+            // Create digit breakdown
+            const dateString = `${month}/${day}/${year}`;
+            const allDigits = dateString.replace(/\//g, '').split('').map(Number);
+            
+            if (allDigits.some(isNaN)) {
+                alert('Please select a valid date!');
+                return;
+            }
+
+            // Calculate total
+            const total = allDigits.reduce((sum, digit) => sum + digit, 0);
+            
+            // Reduce to single digit
+            let singleDigit = total;
+            let reductionSteps = [];
+            
+            while (singleDigit > 9) {
+                const digits = singleDigit.toString().split('').map(Number);
+                reductionSteps.push(`${singleDigit} = ${digits.join(' + ')} = ${digits.reduce((a, b) => a + b)}`);
+                singleDigit = digits.reduce((a, b) => a + b);
+            }
+
+            // Get life path description
+            const lifePathDescription = lifePathMap[singleDigit];
+
+            // Display results
+            displayLifePathResults(dateString, allDigits, total, reductionSteps, singleDigit, lifePathDescription);
+        }
+
+        function displayResults(breakdown, total, reductionSteps, singleDigit, planet, name, type) {
+            const calculationSteps = document.getElementById('calculationSteps');
+            const finalResult = document.getElementById('finalResult');
+            const planetElement = document.getElementById('planet');
+            const resultDiv = document.getElementById('result');
+
+            // Create letter breakdown display
+            let breakdownHTML = `<div class="letter-breakdown">`;
+            for (const item of breakdown) {
+                breakdownHTML += `<div class="letter-item">${item}</div>`;
+            }
+            breakdownHTML += `</div>`;
+
+            // Build calculation steps
+            let stepsHTML = `<strong>${name}</strong><br>${breakdownHTML}`;
+            stepsHTML += `<br><strong>Step 1:</strong> ${breakdown.join(' + ')} = ${total}<br>`;
+            
+            if (reductionSteps.length > 0) {
+                stepsHTML += `<strong>Step 2:</strong> ${reductionSteps.join('<br>')}<br>`;
+            }
+
+            calculationSteps.innerHTML = stepsHTML;
+            finalResult.innerHTML = `Your Name Number: <span style="color: #ffa726;">${singleDigit}</span>`;
+            planetElement.innerHTML = planet;
+
+            // Show result with animation
+            resultDiv.classList.add('show');
+        }
+
+        function displayLifePathResults(dateString, allDigits, total, reductionSteps, singleDigit, description) {
+            const calculationSteps = document.getElementById('calculationSteps');
+            const finalResult = document.getElementById('finalResult');
+            const planetElement = document.getElementById('planet');
+            const resultDiv = document.getElementById('result');
+
+            // Create digit breakdown display
+            let breakdownHTML = `<div class="letter-breakdown">`;
+            for (const digit of allDigits) {
+                breakdownHTML += `<div class="letter-item">${digit}</div>`;
+            }
+            breakdownHTML += `</div>`;
+
+            // Build calculation steps
+            let stepsHTML = `<strong>Birthday: ${dateString}</strong><br>${breakdownHTML}`;
+            stepsHTML += `<br><strong>Step 1:</strong> ${allDigits.join(' + ')} = ${total}<br>`;
+            
+            if (reductionSteps.length > 0) {
+                stepsHTML += `<strong>Step 2:</strong> ${reductionSteps.join('<br>')}<br>`;
+            }
+
+            calculationSteps.innerHTML = stepsHTML;
+            finalResult.innerHTML = `Your Life Path Number: <span style="color: #ffa726;">${singleDigit}</span>`;
+            planetElement.innerHTML = description;
+
+            // Show result with animation
+            resultDiv.classList.add('show');
+        }
+
+        function clearResult() {
+            document.getElementById('nameInput').value = '';
+            document.getElementById('birthdateInput').value = '';
+            document.getElementById('result').classList.remove('show');
+            
+            // Focus on the active tab's input
+            const activeTab = document.querySelector('.tab-content.active');
+            if (activeTab) {
+                const input = activeTab.querySelector('input');
+                if (input) input.focus();
+            }
+        }
+
+        // Allow Enter key to calculate on name input
+        document.getElementById('nameInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateNumerology();
+            }
+        });
+
+        // Auto-calculate when date is selected
+        document.getElementById('birthdateInput').addEventListener('change', function() {
+            if (this.value) {
+                calculateLifePath();
+            }
+        });
+
+        // Auto-focus on input when page loads
+        window.addEventListener('load', function() {
+            document.getElementById('nameInput').focus();
+        });
+    </script>
+</body>
+</html>
