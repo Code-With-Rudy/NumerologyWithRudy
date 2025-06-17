@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <img src="./screenshots/numerology-calc-main.png" width="300" alt="Numerology Calculator Screenshot" />
+  <img src="numcalc.png" width="300" alt="Numerology Calculator Screenshot" />
 </p>
 
 ---
@@ -71,7 +71,7 @@ Steps:
 
 | Name Number | Life Path |
 |-------------|-----------|
-| <img src="./screenshots/name-number.png" width="300"/> | <img src="./screenshots/life-path.png" width="300"/> |
+| <img src="namenum.png" width="300"/> | <img src="lifepath.png" width="300"/> |
 
 ---
 
